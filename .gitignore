@@ -1,0 +1,23 @@
+# Entorno Virtual
+venv/
+env/
+ENV/
+
+# Base de Datos (Desarrollo local)
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de Sistema y Editores
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Archivos de documentación personal/local (Opcional)
+# Si no quieres que el planteamiento de Word se suba:
+Documentacion/
+documentacion/

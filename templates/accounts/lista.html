@@ -1,0 +1,16 @@
+<h2>Usuarios</h2>
+
+<a href="{% url 'crear_usuario' %}">Crear usuario</a>
+
+<ul>
+{% for u in usuarios %}
+    <li>
+        {{ u.username }} - {{ u.perfil.rol }} - 
+        Activo: {{ u.is_active }}
+
+        <a href="{% url 'toggle_usuario' u.id %}">
+            Activar/Desactivar
+        </a>
+    </li>
+{% endfor %}
+</ul>
