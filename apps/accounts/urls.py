@@ -21,12 +21,20 @@ urlpatterns = [
 ]
 """
 from django.urls import path
-from .views import login_view, logout_view, dashboard
+from . import views
+
 
 urlpatterns = [
-    path("login/", login_view, name="login"),
-    path("logout/", logout_view, name="logout"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
 
-    path("dashboard/", dashboard, name="dashboard"),
+    path("dashboard/", views.dashboard, name="dashboard"),
+
+    # usuarios
+    path("usuarios/", views.lista_usuarios, name="lista_usuarios"),
+    path("usuarios/baja/<int:pk>/", views.baja_usuario, name="baja_usuario"),
+    path("usuarios/alta/<int:pk>/", views.alta_usuario, name="alta_usuario"),
+    path("crear-usuario/", views.crear_usuario, name="crear_usuario"),
+
 ]
 

@@ -6,4 +6,7 @@ from .models import Perfil
 @receiver(post_save, sender=User)
 def crear_perfil(sender, instance, created, **kwargs):
     if created:
-        Perfil.objects.create(user=instance)
+        Perfil.objects.create(
+            user=instance,
+            rol="RESPONSABLE"  # rol por defecto
+        )

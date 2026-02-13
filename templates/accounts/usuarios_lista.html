@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Usuarios</h2>
+<a href="{% url 'crear_usuario' %}" class="btn btn-primary mb-3">
+    Nuevo Usuario
+</a>
+<table class="table">
+<tr>
+    <th>Usuario</th>
+    <th>Rol</th>
+    <th>Estado</th>
+    <th></th>
+</tr>
+
+{% for p in perfiles %}
+<tr>
+    <td>{{ p.user.username }}</td>
+    <td>{{ p.rol }}</td>
+    <td>
+        {% if p.activo %}
+            Activo
+        {% else %}
+            Inactivo
+        {% endif %}
+    </td>
+    <td>
+        {% if p.activo %}
+            <a href="{% url 'baja_usuario' p.id %}" class="btn btn-danger btn-sm">
+                Dar de baja
+            </a>
+        {% else %}
+            <a href="{% url 'alta_usuario' p.id %}" class="btn btn-success btn-sm">
+                Reactivar
+            </a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

@@ -8,7 +8,11 @@ from .forms import ClienteForm
 
 @login_required
 def lista_clientes(request):
-    clientes = Cliente.objects.filter(activo=True).order_by("-id")
+    clientes = Cliente.objects.filter(
+        usuario=request.user,
+        activo=True
+    ).order_by("-id")
+    
     return render(request, "clientes/lista.html", {"clientes": clientes})
 
 
@@ -17,7 +21,9 @@ def crear_cliente(request):
     form = ClienteForm(request.POST or None)
 
     if form.is_valid():
-        form.save()
+        cliente = form.save(commit=False) 
+        cliente.usuario = request.user
+        cliente.save()
         messages.success(request, "Cliente creado correctamente")
         return redirect("lista_clientes")
 

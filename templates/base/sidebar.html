@@ -11,11 +11,19 @@
             </a>
         </li>
 
-        <li>
-            <a href="/clientes/" class="nav-link text-white">
-                👥 Clientes
-            </a>
-        </li>
+        <!-- SOLO SUPERADMIN -->
+        {% if request.user.perfil.rol == "SUPERADMIN" %}
+            <li>
+                <a href="{% url 'lista_usuarios' %}">👥 Usuarios</a>
+            </li>
+        {% endif %}
+
+        <!-- RESPONSABLE y SUPERADMIN -->
+        {% if request.user.perfil.rol == "RESPONSABLE" or request.user.perfil.rol == "SUPERADMIN" %}
+            <li>
+                <a href="{% url 'lista_clientes' %}">👥 Clientes</a>
+            </li>
+        {% endif %}
 
         <li>
             <a href="#" class="nav-link text-white">

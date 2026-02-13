@@ -5,4 +5,12 @@
 <h2>Dashboard</h2>
 <p>Bienvenido al sistema del taller.</p>
 
+{% if rol == "SUPERADMIN" %}
+    <p>Panel de administración del sistema</p>
+{% endif %}
+
+{% if rol == "RESPONSABLE" %}
+    <p>Panel del responsable</p>
+{% endif %}
+
 {% endblock %}

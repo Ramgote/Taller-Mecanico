@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Perfil(models.Model):
 
     ROLES = (
@@ -12,5 +13,8 @@ class Perfil(models.Model):
     rol = models.CharField(max_length=20, choices=ROLES)
     telefono = models.CharField(max_length=20, blank=True)
 
+    activo = models.BooleanField(default=True)  # 👈 BORRADO LÓGICO
+
     def __str__(self):
         return f"{self.user.username} - {self.rol}"
+
