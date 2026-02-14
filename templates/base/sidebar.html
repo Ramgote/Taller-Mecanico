@@ -1,60 +1,34 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white vh-100" style="width: 250px;">
 
-    <h4 class="text-center">Taller App</h4>
+
+
+
+<div class="d-flex flex-column p-3 text-white vh-100">
+
+    <h5 class="text-center mt-3">MENÚ</h5>
     <hr>
 
     <ul class="nav nav-pills flex-column mb-auto">
 
         <li class="nav-item">
-            <a href="/dashboard/" class="nav-link text-white">
-                📊 Dashboard
+            <a href="{% url 'dashboard' %}" class="nav-link text-white">
+                🏠 Dashboard
             </a>
         </li>
 
-        <!-- SOLO SUPERADMIN -->
+        <li>
+            <a href="{% url 'lista_clientes' %}" class="nav-link text-white">
+                👥 Clientes
+            </a>
+        </li>
+
         {% if request.user.perfil.rol == "SUPERADMIN" %}
-            <li>
-                <a href="{% url 'lista_usuarios' %}">👥 Usuarios</a>
-            </li>
+        <li>
+            <a href="{% url 'lista_usuarios' %}" class="nav-link text-white">
+                👤 Usuarios
+            </a>
+        </li>
         {% endif %}
-
-        <!-- RESPONSABLE y SUPERADMIN -->
-        {% if request.user.perfil.rol == "RESPONSABLE" or request.user.perfil.rol == "SUPERADMIN" %}
-            <li>
-                <a href="{% url 'lista_clientes' %}">👥 Clientes</a>
-            </li>
-        {% endif %}
-
-        <li>
-            <a href="#" class="nav-link text-white">
-                🚗 Vehículos
-            </a>
-        </li>
-
-        <li>
-            <a href="#" class="nav-link text-white">
-                🛠 Órdenes de Trabajo
-            </a>
-        </li>
-
-        <li>
-            <a href="#" class="nav-link text-white">
-                📦 Repuestos
-            </a>
-        </li>
-
-        <li>
-            <a href="#" class="nav-link text-white">
-                💰 Cobros
-            </a>
-        </li>
 
     </ul>
-
-    <hr>
-
-    <a href="{% url 'logout' %}" class="btn btn-danger w-100">
-        Cerrar sesión
-    </a>
 
 </div>

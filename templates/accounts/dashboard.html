@@ -1,16 +1,44 @@
 {% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 
-<h2>Dashboard</h2>
-<p>Bienvenido al sistema del taller.</p>
+<h2 class="mb-4">📊 Dashboard</h2>
 
-{% if rol == "SUPERADMIN" %}
-    <p>Panel de administración del sistema</p>
-{% endif %}
+<div class="row">
 
-{% if rol == "RESPONSABLE" %}
-    <p>Panel del responsable</p>
-{% endif %}
+    <!-- CLIENTES -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h5>Clientes</h5>
+                <h2 class="text-primary">{{ total_clientes }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- USUARIOS SOLO SUPERADMIN -->
+    {% if rol == "SUPERADMIN" %}
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h5>Usuarios</h5>
+                <h2 class="text-success">{{ total_usuarios }}</h2>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TRABAJOS (futuro) -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h5>Trabajos</h5>
+                <h2 class="text-warning">0</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

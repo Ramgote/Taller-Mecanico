@@ -1,40 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     {% include "base/head.html" %}
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
+    <!-- NAVBAR -->
     {% include "base/navbar.html" %}
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
 
             <!-- SIDEBAR -->
-            <div class="col-md-2 p-0">
+            <aside class="col-md-2 bg-dark text-white p-0 vh-100 position-fixed">
                 {% include "base/sidebar.html" %}
-            </div>
+            </aside>
 
             <!-- CONTENIDO -->
-            <div class="col-md-10 p-4">
+            <main class="col-md-10 offset-md-2 p-4">
 
+                <!-- MENSAJES -->
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">
+                        <div class="alert alert-{{ message.tags }} shadow-sm">
                             {{ message }}
                         </div>
                     {% endfor %}
                 {% endif %}
 
+                <!-- CONTENIDO DINÁMICO -->
                 {% block content %}
                 {% endblock %}
 
-            </div>
+            </main>
 
         </div>
     </div>
 
+    <!-- FOOTER -->
     {% include "base/footer.html" %}
 
 </body>

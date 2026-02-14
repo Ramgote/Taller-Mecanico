@@ -6,6 +6,37 @@
 <a href="{% url 'crear_usuario' %}" class="btn btn-primary mb-3">
     Nuevo Usuario
 </a>
+
+<form method="get" class="row mb-3">
+
+    <div class="col-md-4">
+        <input type="text" name="q" value="{{ query }}"
+               class="form-control"
+               placeholder="🔍 Buscar usuario...">
+    </div>
+
+    <div class="col-md-3">
+        <select name="estado" class="form-select">
+            <option value="activos"
+                {% if estado == "activos" %}selected{% endif %}>
+                Activos
+            </option>
+
+            <option value="inactivos"
+                {% if estado == "inactivos" %}selected{% endif %}>
+                Inactivos
+            </option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">
+            Buscar
+        </button>
+    </div>
+
+</form>
+
 <table class="table">
 <tr>
     <th>Usuario</th>
@@ -19,20 +50,20 @@
     <td>{{ p.user.username }}</td>
     <td>{{ p.rol }}</td>
     <td>
-        {% if p.activo %}
+         {% if p.user.perfil.activo %}
             Activo
         {% else %}
             Inactivo
         {% endif %}
     </td>
     <td>
-        {% if p.activo %}
-            <a href="{% url 'baja_usuario' p.id %}" class="btn btn-danger btn-sm">
-                Dar de baja
+        {% if p.user.perfil.activo %}
+            <a href="{% url 'baja_usuario' p.user.id %}" class="btn btn-danger btn-sm">
+                Baja
             </a>
         {% else %}
-            <a href="{% url 'alta_usuario' p.id %}" class="btn btn-success btn-sm">
-                Reactivar
+            <a href="{% url 'alta_usuario' p.user.id %}" class="btn btn-success btn-sm">
+                Alta
             </a>
         {% endif %}
     </td>

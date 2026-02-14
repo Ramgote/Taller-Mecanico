@@ -8,6 +8,10 @@ from django.shortcuts import render, redirect
 
 from .models import Perfil
 from .forms import CrearUsuarioForm
+from apps.clientes.models import Cliente
+from .decorators import rol_requerido
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 def login_view(request):
 
@@ -34,35 +38,69 @@ def logout_view(request):
     return redirect("login")
 
 
-# ---------------- DASHBOARD ----------------
-
 @login_required
 def dashboard(request):
-    rol = request.user.perfil.rol
+    perfil = request.user.perfil
+
+    # if perfil.rol == "SUPERADMIN":
+    if request.user.perfil.es_superadmin():
+        total_clientes = Cliente.objects.filter(activo=True).count()
+        total_usuarios = User.objects.filter(is_active=True).count()
+
+    else:
+        total_clientes = Cliente.objects.filter(
+            usuario=request.user,
+            activo=True
+        ).count()
+
+        total_usuarios = None
 
     contexto = {
-        "rol": rol
+        "total_clientes": total_clientes,
+        "total_usuarios": total_usuarios,
+        "rol": perfil.rol
     }
 
     return render(request, "accounts/dashboard.html", contexto)
 
-@login_required
+@rol_requerido(["SUPERADMIN"])
 def lista_usuarios(request):
 
-    if request.user.perfil.rol != "SUPERADMIN":
+    if not request.user.perfil.es_superadmin() :
         messages.error(request, "No tienes permisos")
         return redirect("dashboard")
 
-    perfiles = Perfil.objects.select_related("user")
+    query = request.GET.get("q", "").strip()
+    estado = request.GET.get("estado", "activos")
+    perfiles = Perfil.objects.select_related("user").all()
+
+    if estado == "inactivos":
+        perfiles = perfiles.filter(activo=False)
+    else:
+        perfiles = perfiles.filter(activo=True)
+
+    # BUSCADOR
+    if query:
+        perfiles = perfiles.filter(
+            Q(user__username__icontains=query) |
+            Q(user__email__icontains=query) |
+            Q(user__first_name__icontains=query)
+        )
+
+    paginator = Paginator(perfiles, 5)
+    page_number = request.GET.get("page")
+    perfiles = paginator.get_page(page_number)
 
     return render(request, "accounts/usuarios_lista.html", {
-        "perfiles": perfiles
+        "perfiles": perfiles,
+        "query": query,
+        "estado": estado
     })
 
 @login_required
 def baja_usuario(request, pk):
 
-    if request.user.perfil.rol != "SUPERADMIN":
+    if not request.user.perfil.es_superadmin() :
         messages.error(request, "No permitido")
         return redirect("dashboard")
 
@@ -77,7 +115,7 @@ def baja_usuario(request, pk):
 @login_required
 def alta_usuario(request, pk):
 
-    if request.user.perfil.rol != "SUPERADMIN":
+    if not request.user.perfil.es_superadmin() :
         messages.error(request, "No permitido")
         return redirect("dashboard")
 
@@ -86,13 +124,13 @@ def alta_usuario(request, pk):
     perfil.activo = True
     perfil.save()
 
-    messages.success(request, "Usuario reactivado")
+    messages.success(request, "Usuario dado de alta")
     return redirect("lista_usuarios")
 
 @login_required
 def crear_usuario(request):
 
-    if request.user.perfil.rol != "SUPERADMIN":
+    if not request.user.perfil.es_superadmin() :
         return redirect("dashboard")
 
     form = CrearUsuarioForm(request.POST or None)

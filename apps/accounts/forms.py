@@ -14,16 +14,26 @@ class LoginForm(forms.Form):
 # -------- CREAR USUARIO --------
 
 class CrearUsuarioForm(forms.ModelForm):
+
     password = forms.CharField(
         label="Contraseña",
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
-    rol = forms.ChoiceField(choices=Perfil.ROLES)
+    rol = forms.ChoiceField(
+        choices=Perfil.ROLES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'email', 'password']
+
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -31,8 +41,6 @@ class CrearUsuarioForm(forms.ModelForm):
 
         if commit:
             user.save()
-
-            # Perfil creado por signals
             perfil = user.perfil
             perfil.rol = self.cleaned_data['rol']
             perfil.save()

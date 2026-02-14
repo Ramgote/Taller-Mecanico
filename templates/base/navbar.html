@@ -1,5 +1,19 @@
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Mi Sistema</span>
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <span class="navbar-brand">
+        🔧 Sistema Taller
+    </span>
+
+    <div class="d-flex align-items-center text-white">
+
+        <span class="me-3">
+            👤 {{ request.user.username }}
+        </span>
+
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+            🚪 Cerrar sesión
+        </a>
+
     </div>
+
 </nav>
