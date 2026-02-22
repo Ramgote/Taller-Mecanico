@@ -1,0 +1,42 @@
+{% extends "base/form_base.html" %}
+
+{% block form_fields %}
+
+<div class="col-md-6 mb-3">
+<label>Nombre</label>
+{{ form.nombre }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Teléfono</label>
+{{ form.telefono }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>NIT/CI</label>
+{{ form.nit_ci }}
+</div>
+
+<input type="hidden" name="activo" value="True">
+
+{% if request.user.perfil.rol == "SUPERADMIN" %}
+<div class="col-md-6 mb-3">
+    <label>Responsable</label>
+
+    <select name="usuario" class="form-control">
+        <option value="">Seleccione responsable</option>
+
+        {% for u in responsables %}
+            <option value="{{ u.id }}"
+                {% if responsable_id == u.id %}
+                    selected                    
+                {% endif %}
+            >
+                {{ u.username }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+{% endblock %}

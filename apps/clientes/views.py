@@ -41,9 +41,10 @@ def lista_clientes(request):
         "estado": estado
     })
 
-@login_required
+@rol_requerido(["SUPERADMIN", "RESPONSABLE"])
 def crear_cliente(request):
-
+    # Esto es para cuando le demos al superadmin la posibilidad de crea clientes
+    # form = ClienteForm(request.POST or None, instance=cliente, user=request.user)
     form = ClienteForm(request.POST or None)
     responsables = User.objects.filter(
                 perfil__rol="RESPONSABLE",
@@ -64,7 +65,7 @@ def crear_cliente(request):
 
             if not responsable_id:
                 messages.error(request, "Debe elegir responsable")
-                return render(request, "clientes/form.html", {
+                return render(request, "clientes/crear.html", {
                     "form": form,
                     "responsables": responsables,
                     "titulo": "👤 Crear Cliente",
@@ -75,11 +76,12 @@ def crear_cliente(request):
             cliente.usuario = User.objects.get(id=responsable_id)
         cliente.activo = True
         cliente.save()
-        
+
         messages.success(request, "Cliente creado correctamente")
         return redirect("lista_clientes")
-
-    return render(request, "clientes/form.html", {
+    else:
+        print("Error en el form : ", form.errors)
+    return render(request, "clientes/crear.html", {
         "form": form,
         "responsables": responsables,
         "titulo": "👤 Crear Cliente",
@@ -87,25 +89,43 @@ def crear_cliente(request):
         "cancelar_url": reverse("lista_clientes")
     })
 
-
-@login_required
+@rol_requerido(["SUPERADMIN", "RESPONSABLE"])
 def editar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    form = ClienteForm(request.POST or None, instance=cliente)
+    responsables = User.objects.filter(
+                perfil__rol="RESPONSABLE",
+                is_active=True
+            )
+    
+    form = ClienteForm(
+        # request.POST or None,
+        request.POST or None,
+        instance=cliente,
+        # user=request.user
+    ) 
 
     if form.is_valid():
+        # obj = form.save(commit=False)    
+        # Si quieres asegurar que no cambie el estado activo:
+        # obj.activo = cliente.activo 
+    
+        # obj.save()
         form.save()
         messages.success(request, "Cliente actualizado")
         return redirect("lista_clientes")
+    else:
+        print("Algo esta fallando", form.errors)
 
-    return render(request, "clientes/form.html", {        
+    return render(request, "clientes/editar.html", {        
             "form": form,
-            "titulo": "👤 Editar Cliente",
-            "boton": "Guardar Cliente",
+            "titulo": "✏️ Editar Cliente",
+            "responsables": responsables,
+            "responsable_id": cliente.usuario_id,
+            "boton": "Actualizar Cliente",
             "cancelar_url": reverse("lista_clientes")
         })
 
-@login_required
+@rol_requerido(["SUPERADMIN", "RESPONSABLE"])
 def baja_cliente(request, id):
     cliente = Cliente.objects.get(id=id)
     cliente.activo = False
@@ -113,7 +133,7 @@ def baja_cliente(request, id):
     messages.warning(request, "Cliente dado de baja")
     return redirect("lista_clientes")
 
-@rol_requerido(["SUPERADMIN"])
+@rol_requerido(["SUPERADMIN", "RESPONSABLE"])
 def alta_cliente(request, id):
     cliente = Cliente.objects.get(id=id)
     cliente.activo = True
