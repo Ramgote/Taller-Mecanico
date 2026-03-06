@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.accounts.urls')),
     path("clientes/", include("apps.clientes.urls")),
-
+    path('vehiculos/', include('apps.vehiculos.urls')),
+    path("", home_redirect),
 ]
 

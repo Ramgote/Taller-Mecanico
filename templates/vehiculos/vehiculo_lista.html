@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Vehículos</h2>
+
+    <a href="{% url 'crear_vehiculo' %}" 
+        class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+        style="width:40px;height:40px;"
+        title="Nuevo Vehículo">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+</div>
+
+<table class="table table-hover align-middle">
+
+    <thead class="table-light">
+        <tr>
+            <th><i class="bi bi-upc-scan"></i> Placa</th>
+            <th><i class="bi bi-person"></i> Cliente</th>
+            <th><i class="bi bi-tags"></i> Marca</th>
+            <th><i class="bi bi-car-front"></i> Modelo</th>
+            <th><i class="bi bi-truck"></i> Tipo</th>
+            <th class="text-center"><i class="bi bi-gear"></i> Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for v in vehiculos %}
+    <tr>
+
+        <td>
+            <span class="badge bg-dark fs-6">
+                {{ v.placa }}
+            </span>
+        </td>
+
+        <td>
+            <i class="bi bi-person-circle text-secondary"></i>
+            {{ v.cliente.nombre }}
+        </td>
+
+        <td>
+            <span class="badge bg-secondary">
+                {{ v.marca.nombre }}
+            </span>
+        </td>
+
+        <td>{{ v.modelo.nombre }}</td>
+
+        <td>
+            <span class="badge bg-info text-dark">
+                {{ v.get_tipo_vehiculo_display }}
+            </span>
+        </td>
+
+        <td class="text-center">
+
+            <a href="{% url 'editar_vehiculo' v.id %}"
+               class="btn btn-sm btn-warning"
+               title="Editar">
+               <i class="bi bi-pencil"></i>
+            </a>
+
+            <a href="#"
+               class="btn btn-sm btn-danger"
+               title="Eliminar">
+               <i class="bi bi-trash"></i>
+            </a>
+
+            <a href="#"
+               class="btn btn-sm btn-info"
+               title="Ver">
+               <i class="bi bi-eye"></i>
+            </a>
+
+        </td>
+
+    </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+<!--
+<table class="table table-striped">
+    <tr>
+        <th>Placa</th>
+        <th>Cliente</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Tipo</th>
+        <th></th>
+    </tr>
+
+    {% for v in vehiculos %}
+    <tr>
+        <td>{{ v.placa }}</td>
+        <td>{{ v.cliente.nombre }}</td>
+        <td>{{ v.marca.nombre }}</td>
+        <td>{{ v.modelo.nombre }}</td>
+        <td>{{ v.get_tipo_vehiculo_display }}</td>
+        <td>
+            <a href="{% url 'editar_vehiculo' v.id %}" class="btn btn-warning btn-sm">
+                Editar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+-->
+{% endblock %}

@@ -37,7 +37,7 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
-
+"""
 @login_required
 def dashboard(request):
     perfil = request.user.perfil
@@ -53,6 +53,26 @@ def dashboard(request):
             activo=True
         ).count()
 
+        total_usuarios = None
+
+    contexto = {
+        "total_clientes": total_clientes,
+        "total_usuarios": total_usuarios,
+        "rol": perfil.rol
+    }
+
+    return render(request, "accounts/dashboard.html", contexto)
+"""
+@login_required
+def dashboard(request):
+
+    perfil = request.user.perfil
+
+    total_clientes = Cliente.objects.filter(activo=True).count()
+
+    if perfil.es_superadmin():
+        total_usuarios = User.objects.filter(is_active=True).count()
+    else:
         total_usuarios = None
 
     contexto = {

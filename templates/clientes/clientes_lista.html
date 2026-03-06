@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Clientes</h2>
-
-<a href="{% url 'crear_cliente' %}" class="btn btn-primary mb-3">
-    Nuevo Cliente
-</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Clientes</h2>
+    <!--
+    <span class="badge bg-secondary">
+    {{ clientes|length }}
+    </span>
+    -->
+    <a href="{% url 'crear_cliente' %}" 
+        class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+        style="width:40px;height:40px;"
+        title="Nuevo Cliente">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+</div>
 
 <form method="get" class="row mb-3">
 
@@ -27,42 +36,102 @@
     </div>
 
     <div class="col-md-2">
-        <button class="btn btn-primary w-100">
-            Buscar
+        <button class="btn btn-primary w-80" title="Filtrar">
+        <i class="bi bi-funnel-fill"></i> Filtrar
         </button>
     </div>
 
 </form>
 
-<table class="table table-striped">
-    <tr>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th>NIT/CI</th>
-        <th></th>
-    </tr>
+<table class="table table-hover align-middle">
+
+    <thead class="table-light">
+        <tr>
+            <th><i class="bi bi-person"></i> Cliente</th>
+            <th><i class="bi bi-telephone"></i> Teléfono</th>
+            <th><i class="bi bi-card-text"></i> NIT / CI</th>
+            <th><i class="bi bi-shield-check"></i> Estado</th>
+            <th class="text-center"><i class="bi bi-gear"></i> Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
 
     {% for c in clientes %}
     <tr>
-        <td>{{ c.nombre }}</td>
-        <td>{{ c.telefono }}</td>
-        <td>{{ c.nit_ci }}</td>
+
         <td>
-            <a href="{% url 'editar_cliente' c.id %}" class="btn btn-warning btn-sm">
-                Editar
+            <span class="badge bg-primary rounded-circle me-2">
+            {{ c.nombre|first|upper }}
+            </span>
+            {{ c.nombre }}
+        </td>
+
+        <td>
+            <i class="bi bi-telephone text-muted"></i>
+            {{ c.telefono }}
+        </td>
+
+        <td>
+            <span class="badge bg-secondary">
+                {{ c.nit_ci }}
+            </span>
+        </td>
+
+        <td>
+
+            {% if c.activo %}
+                <span class="badge bg-success">
+                    <i class="bi bi-check-circle"></i>
+                    Activo
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    <i class="bi bi-x-circle"></i>
+                    Inactivo
+                </span>
+            {% endif %}
+
+        </td>
+
+        <td class="text-center">
+
+            <a href="{% url 'editar_cliente' c.id %}"
+               class="btn btn-warning btn-sm"
+               title="Editar">
+
+                <i class="bi bi-pencil"></i>
             </a>
 
             {% if c.activo %}
             <a href="{% url 'baja_cliente' c.id %}"
-            class="btn btn-danger btn-sm">Baja</a>
+               class="btn btn-danger btn-sm"
+               title="Dar de baja">
+
+               <i class="bi bi-person-dash"></i>
+            </a>
             {% else %}
             <a href="{% url 'alta_cliente' c.id %}"
-            class="btn btn-success btn-sm">Alta</a>
+               class="btn btn-success btn-sm"
+               title="Dar de alta">
+
+               <i class="bi bi-person-add"></i>
+            </a>
             {% endif %}
+
+            <a href="#"
+               class="btn btn-sm btn-info"
+               title="Ver">
+               <i class="bi bi-eye"></i>
+            </a>
             
         </td>
+
     </tr>
     {% endfor %}
+
+    </tbody>
+
 </table>
 
 <div class="mt-3">

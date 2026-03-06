@@ -1,0 +1,370 @@
+{% extends "base/form_base.html" %}
+
+{% block form_fields %}
+
+{% if form.errors %}
+<div class="alert alert-danger">
+    <strong>Errores en el formulario:</strong>
+    {{ form.errors }}
+</div>
+{% endif %}
+
+<div class="col-md-6 mb-3">
+<label>Cliente</label>
+    <div class="d-flex gap-2">
+        {{ form.cliente }}
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalCliente">
+        +
+        </button>
+    </div>
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Placa</label>
+{{ form.placa }}
+</div>
+
+<div class="col-md-6 mb-3">
+    <label>Marca</label>
+    <div class="d-flex gap-2">
+        {{ form.marca }}
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalMarca">
+        +
+        </button>
+    </div>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label>Modelo</label>
+    <div class="d-flex gap-2">
+        {{ form.modelo }}
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalModelo">
+        +
+        </button>
+    </div>
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Tipo</label>
+{{ form.tipo_vehiculo }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Año</label>
+{{ form.anio }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Color</label>
+{{ form.color }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Kilometraje</label>
+{{ form.kilometraje }}
+</div>
+
+<div class="col-md-12 mb-3">
+<label>Observaciones</label>
+{{ form.observaciones }}
+</div>
+
+<!-- Modal Cliente -->
+<div class="modal fade" id="modalCliente" tabindex="-1">
+  <div class="modal-dialog modal-lg"> <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nuevo Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input type="text" id="nuevoClienteNombre" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>NIT/CI</label>
+                <input type="text" id="nuevoClienteNit" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Teléfono 1</label>
+                <input type="text" id="nuevoClienteTel1" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Teléfono 2</label>
+                <input type="text" id="nuevoClienteTel2" class="form-control">
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="guardarCliente">Guardar Cliente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Marca -->
+<div class="modal fade" id="modalMarca" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nueva Marca</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="nuevaMarcaNombre" class="form-control" placeholder="Nombre de la marca">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="guardarMarca">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Modelo -->
+<div class="modal fade" id="modalModelo" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nuevo Modelo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="nuevoModeloNombre" class="form-control mb-2" placeholder="Nombre del modelo">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="guardarModelo">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+const btnAbrirModelo = document.querySelector('[data-bs-target="#modalModelo"]');
+const selectMarca = document.getElementById("id_marca");
+
+function controlarBotonModelo() {
+    if (selectMarca.value) {
+        btnAbrirModelo.removeAttribute("disabled");
+    } else {
+        btnAbrirModelo.setAttribute("disabled", "disabled");
+    }
+}
+
+controlarBotonModelo();
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const selectMarca = document.getElementById("id_marca");
+    const selectModelo = document.getElementById("id_modelo");
+
+    /* =========================
+    CREAR CLIENTE (AJAX)
+    ========================== */
+    const guardarClienteBtn = document.getElementById("guardarCliente");
+    const selectCliente = document.getElementById("id_cliente"); // ID generado por Django
+
+    if (guardarClienteBtn) {
+        guardarClienteBtn.addEventListener("click", function() {
+            // Captura de datos
+            const nombre = document.getElementById("nuevoClienteNombre").value.trim();
+            const nit = document.getElementById("nuevoClienteNit").value.trim();
+            const tel1 = document.getElementById("nuevoClienteTel1").value.trim();
+            const tel2 = document.getElementById("nuevoClienteTel2").value.trim();
+
+            if (!nombre) {
+                alert("El nombre del cliente es obligatorio");
+                return;
+            }
+
+            // Petición al servidor
+            fetch("{% url 'crear_cliente_ajax' %}", { // Asegúrate de crear esta URL
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: `nombre=${encodeURIComponent(nombre)}&nit_ci=${encodeURIComponent(nit)}&telefono=${encodeURIComponent(tel1)}&telefono_alt=${encodeURIComponent(tel2)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Añadir el nuevo cliente al selector y seleccionarlo
+                const option = new Option(data.nombre, data.id, true, true);
+                selectCliente.add(option);
+
+                // Limpiar campos del modal
+                document.getElementById("nuevoClienteNombre").value = "";
+                document.getElementById("nuevoClienteNit").value = "";
+                document.getElementById("nuevoClienteTel1").value = "";
+                document.getElementById("nuevoClienteTel2").value = "";
+
+                // Cerrar el modal
+                cerrarModal('modalCliente');
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    }
+
+    /* =========================
+       CAMBIO DE MARCA
+    ========================== */
+
+    selectMarca.addEventListener("change", function() {
+        controlarBotonModelo();
+        const marcaId = this.value;
+
+        // limpiar modelos
+        selectModelo.innerHTML = '<option value="">Seleccione Modelo</option>';
+
+        if (!marcaId) return;
+
+        fetch("{% url 'modelos_por_marca' %}?marca_id=" + marcaId)
+        .then(response => response.json())
+        .then(data => {
+
+            data.modelos.forEach(function(modelo) {
+
+                const option = new Option(
+                    modelo.nombre,
+                    modelo.id
+                );
+
+                selectModelo.add(option);
+
+            });
+
+        })
+        .catch(error => {
+            console.error("Error cargando modelos:", error);
+        });
+
+    });
+
+    /* =========================
+       FUNCION CERRAR MODAL
+    ========================== */
+
+    function cerrarModal(modalId) {
+
+        const modalElement = document.getElementById(modalId);
+        const modal = bootstrap.Modal.getInstance(modalElement);
+
+        if (modal) modal.hide();
+
+        document.body.classList.remove('modal-open');
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    }
+
+    /* =========================
+       CREAR MARCA
+    ========================== */
+
+    const guardarMarcaBtn = document.getElementById("guardarMarca");
+
+    if (guardarMarcaBtn) {
+
+        guardarMarcaBtn.addEventListener("click", function() {
+
+            const nombre = document.getElementById("nuevaMarcaNombre").value.trim();
+
+            if (!nombre) {
+                alert("Debe ingresar un nombre");
+                return;
+            }
+
+            fetch("{% url 'crear_marca_ajax' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: `nombre=${encodeURIComponent(nombre)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const option = new Option(data.nombre, data.id, true, true);
+
+                selectMarca.add(option);
+
+                selectMarca.dispatchEvent(new Event('change'));
+
+                cerrarModal('modalMarca');
+
+            });
+
+        });
+
+    }
+
+    /* =========================
+       CREAR MODELO
+    ========================== */
+
+    const guardarModeloBtn = document.getElementById("guardarModelo");
+
+    if (guardarModeloBtn) {
+
+        guardarModeloBtn.addEventListener("click", function() {
+
+            const nombre = document.getElementById("nuevoModeloNombre").value.trim();
+            const marcaId = selectMarca.value;
+
+            if (!nombre) {
+                alert("Debe ingresar un nombre");
+                return;
+            }
+
+            if (!marcaId) {
+                alert("Debe seleccionar una marca primero");
+                return;
+            }
+
+            fetch("{% url 'crear_modelo_ajax' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: `nombre=${encodeURIComponent(nombre)}&marca_id=${marcaId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const option = new Option(data.nombre, data.id, true, true);
+
+                selectModelo.add(option);
+
+                cerrarModal('modalModelo');
+
+            });
+
+        });
+
+    }
+
+});
+</script>
+{% endblock %}
